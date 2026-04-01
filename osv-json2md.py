@@ -21,6 +21,9 @@ def gen_report_with_cwe(file):
                 for vuln in package["vulnerabilities"]:
                     # cwe
                     if "database_specific" in vuln:
+                        # crates
+                        if not "cwe_ids" in vuln["database_specific"]:
+                            break
                         ids = vuln["database_specific"]["cwe_ids"]
                         cwes.append([])
                         for i in ids:
@@ -37,7 +40,8 @@ def gen_report_with_cwe(file):
                         for affected in vuln["affected"]:
                             if "ranges" in affected:
                                 for rang in affected["ranges"]:
-                                    if "type" in rang and "ECOSYSTEM" == rang["type"]:
+                                    rtype = ["ECOSYSTEM", "SEMVER", "GIT"]
+                                    if "type" in rang and rang["type"] in rtype:
                                         frm = "?"
                                         for event in rang["events"]:
                                             if "introduced" in event:
